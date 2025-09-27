@@ -1,0 +1,84 @@
+
+# Версия формата docker-compose файла
+version: '3.8'
+
+# Секция services - определяет все контейнеры (сервисы)
+services:
+  # Имя сервиса (можно называть как угодно)
+  clickhouse:
+    # Образ Docker для создания контейнера
+    image: clickhouse/clickhouse-server:latest
+    
+    # Имя контейнера (удобно для ручного управления)
+    container_name: clickhouse_server_msk
+    
+    # Проброс портов: ЛОКАЛЬНЫЙ_ПОРТ:ПОРТ_В_КОНТЕЙНЕРЕ
+    ports:
+      - "8123:8123"  # HTTP интерфейс (для работы извне)
+      # - "6789:6789"  # Native protocol (для клиентов)
+    
+    # Подключение томов (volumes) для сохранения данных
+    volumes:
+      # Именованный том для данных БД (сохраняется между перезапусками)
+      - clickhouse_data:/var/lib/clickhouse
+      # Именованный том для логов
+      - clickhouse_log:/var/log/clickhouse-server
+    
+    # Переменные окружения (настройки контейнера)
+    environment:
+      - CLICKHOUSE_DB=msk_database        # Имя базы данных по умолчанию
+      - CLICKHOUSE_USER=admin            # Логин администратора
+      - CLICKHOUSE_PASSWORD=password     # Пароль администратора
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1  # Разрешает управление доступом
+    networks:
+      - clickhouse-network
+
+  asupr-app:
+    build: ./asupr_app
+    container_name: asupr_modeling
+    environment:
+      - CLICKHOUSE_HOST=clickhouse
+      - CLICKHOUSE_PORT=8123
+      - CLICKHOUSE_DB=msk_database
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_PASSWORD=password
+      - PYTHONUNBUFFERED=1
+      - TERM=xterm
+    depends_on:
+      - clickhouse
+    volumes:
+      - ./asupr_app/src:/app/src
+    networks:
+      - clickhouse-network
+    command: python /app/src/generate_data.py  # раскомментировать для автозапуска
+
+
+  dash-app:
+    build: ./dash_app
+    container_name: dash_visualization
+    environment:
+      - CLICKHOUSE_HOST=clickhouse
+      - CLICKHOUSE_PORT=8123
+      - CLICKHOUSE_DB=msk_database
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_PASSWORD=password
+    depends_on:
+      - asupr-app
+    ports:
+      - "8124:8124"  # порт для доступа к Dash из вне
+    volumes:
+      - ./dash_app:/app
+    networks:
+      - clickhouse-network
+    command: python /app/main.py  # файл запуска Dash приложения
+
+
+
+# Секция volumes - определяет тома для хранения данных
+volumes:
+  clickhouse_data:  # Создает том с именем "clickhouse_data"
+  clickhouse_log:   # Создает том с именем "clickhouse_log"
+
+networks:
+  clickhouse-network:
+    driver: bridge

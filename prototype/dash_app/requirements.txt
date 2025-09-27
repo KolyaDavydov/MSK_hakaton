@@ -1,0 +1,9 @@
+pandas==2.0.3
+catboost==1.2.6
+clickhouse-connect==0.8.6
+dash==2.18.2
+dash-bootstrap-components==1.7.1
+tsfresh==0.21.1
+openpyxl==3.1.5
+tqdm==4.67.1
+
