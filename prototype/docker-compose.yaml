@@ -32,6 +32,11 @@ services:
       - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1  # Разрешает управление доступом
     networks:
       - clickhouse-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123/ping"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
 
   asupr-app:
     build: ./asupr_app

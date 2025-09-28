@@ -123,37 +123,6 @@ def get_predict(df, model_4, model_24, model_72):
 # Создание клиента к БД
 client = clickhouse_connect.get_client(**CLICK_CONN)
 
-df = prepare_data_for_predict()
-
-model_4, model_24, model_72 = load_model()
-
-df = get_predict(df, model_4, model_24, model_72)
-
-
-client.command('DROP TABLE IF EXISTS msk_database.prediction')
-
-create_table_query = '''
-CREATE TABLE IF NOT EXISTS msk_database.prediction (
-    id Int32,
-    datetime DateTime,
-    dif Float32,
-    percent_dif Float32,
-    rashod_hot Float32,
-    rashod_cold Float32,
-    pred_4h Float32,
-    pred_24h Float32,
-    pred_72h Float32,
-) ENGINE = MergeTree()
-ORDER BY (datetime)
-'''
-
-client.command(create_table_query)
-
-client.insert_df('msk_database.prediction', df)
-
-
-
-
 result = client.query('SELECT DISTINCT id FROM msk_database.analytic')
 # Получим уникальные значения id в виде списка Python
 unique_ids = [row[0] for row in result.result_rows]
@@ -166,7 +135,7 @@ id_selection_predict = dbc.Card(
             value=unique_ids[0],
             style={"margin-top": -10}
         ),
-        html.Div('Выбор дома', style={'font-weight': 'bold', "height": 10})
+        html.Div('Выбор дома', style={'font-weight': 'bold', "height": 10, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':0})
     ],
     body=True,
     color="secondary",
@@ -180,14 +149,14 @@ period_selection_predict = dbc.Card(
             options=[
                 {'label': ' 1 месяц', 'value': 1},
                 {'label': ' 3 месяца', 'value': 3},
-                {'label': ' 12 месяцев', 'value': 12}
+                {'label': ' 1 год', 'value': 12}
             ],
             value=1,
             inline=True,
             labelStyle={'margin-right': '30px'},  # горизонтальные отступы
             style={'margin': '0px 0'}  # вертикальные отступы
         ),
-        html.Div('Период отображение', style={'font-weight': 'bold', "height": 10})
+        html.Div('Период отображение', style={'font-weight': 'bold', "height": 10, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':0})
     ],
     body=True,
     color="secondary",
@@ -201,8 +170,8 @@ metric_predict_all = dbc.Card(
             dbc.Col([
                 dbc.Card([
                     dbc.CardBody([
-                        html.H6("4ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
-                        html.H4(id="mae-4h", children="расчет...", className="card-text"),
+                        html.H6("прогноз 4ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
+                        html.H4(id="mae-4h", children="...", className="card-text"),
                     ])
                 ], color="light", outline=True)
             ], width=4),
@@ -210,8 +179,8 @@ metric_predict_all = dbc.Card(
             dbc.Col([
                 dbc.Card([
                     dbc.CardBody([
-                        html.H6("24ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
-                        html.H4(id="mae-24h", children="расчет...", className="card-text"),
+                        html.H6("прогноз 24ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
+                        html.H4(id="mae-24h", children="...", className="card-text"),
                     ])
                 ], color="light", outline=True)
             ], width=4),
@@ -219,13 +188,13 @@ metric_predict_all = dbc.Card(
             dbc.Col([
                 dbc.Card([
                     dbc.CardBody([
-                        html.H6("72ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
-                        html.H4(id="mae-72h", children="расчет...", className="card-text"),
+                        html.H6("прогноз 72ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
+                        html.H4(id="mae-72h", children="...", className="card-text"),
                     ])
                 ], color="light", outline=True)
             ], width=4)
         ], className="g-2"),  # Отступы между колонками
-        html.Div('Общая средня ошибка', style={'font-weight': 'bold', "height": 10, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':10})
+        html.Div('Общая точность моделей', style={'font-weight': 'bold', "height": 10, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':10})
     ],
     body=True,
     color="secondary",
@@ -239,8 +208,8 @@ metric_predict_current = dbc.Card(
             dbc.Col([
                 dbc.Card([
                     dbc.CardBody([
-                        html.H6("4ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
-                        html.H4(id="mae-4h-curr", children="расчет...", className="card-text"),
+                        html.H6("прогноз 4ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
+                        html.H4(id="mae-4h-curr", children="...", className="card-text"),
                     ])
                 ], color="light", outline=True)
             ], width=4),
@@ -248,8 +217,8 @@ metric_predict_current = dbc.Card(
             dbc.Col([
                 dbc.Card([
                     dbc.CardBody([
-                        html.H6("24ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
-                        html.H4(id="mae-24h-curr", children="расчет...", className="card-text"),
+                        html.H6("прогноз 24ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
+                        html.H4(id="mae-24h-curr", children="...", className="card-text"),
                     ])
                 ], color="light", outline=True)
             ], width=4),
@@ -257,13 +226,13 @@ metric_predict_current = dbc.Card(
             dbc.Col([
                 dbc.Card([
                     dbc.CardBody([
-                        html.H6("72ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
-                        html.H4(id="mae-72h-curr", children="расчет...", className="card-text"),
+                        html.H6("прогноз 72ч", className="card-title", style={"font-size": "0.9rem", "text-align": "right"}),
+                        html.H4(id="mae-72h-curr", children="...", className="card-text"),
                     ])
                 ], color="light", outline=True)
             ], width=4)
         ], className="g-2"),  # Отступы между колонками
-        html.Div('Текущая средня ошибка', style={'font-weight': 'bold', "height": 10, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':10})
+        html.Div('Текущая средняя ошибка прогнозов', style={'font-weight': 'bold', "height": 10, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':10})
     ],
     body=True,
     color="secondary",
@@ -271,56 +240,243 @@ metric_predict_current = dbc.Card(
 )
 
 
+attention = dbc.Card(
+    [
+        dbc.Row([
+            html.H6("Прогноз 4 часа", style={"textAlign": "center", "margin-bottom": "10px"}),
+            dash_table.DataTable(
+                id='pred-4h-table',
+                columns=[
+                    {"name": "МКД №", "id": "id", "type": "numeric"},
+                    {"name": "Дата", "id": "datetime", "type": "datetime"},
+                    {"name": "Время", "id": "hour"},
+                    {"name": "Вер-сть инцидента, %", "id": 'pred_4h', "type": "numeric", "format": {"specifier": ".2f"}},
+
+
+                ],
+                data=[],
+                style_header={
+                    'fontWeight': 'bold',
+                    'textAlign': 'center',
+                    'backgroundColor': '#343a40',
+                    'color': 'white',
+                    'fontSize': '12px',
+                    'padding': '6px',
+                },
+                style_data_conditional=[
+                    {
+                        'if': {
+                            'filter_query': '{pred_4h} <= 12.0',
+                        },
+                        'backgroundColor': '#d4edda',  # слабый зеленый
+                        'color': '#155724',  # темно-зеленый текст
+                    },
+                    {
+                        'if': {
+                            'filter_query': '{pred_4h} > 12.0 && {pred_4h} <= 40.0',
+                        },
+                        'backgroundColor': '#fff3cd',  # слабый желтый
+                        'color': '#856404',  # темно-желтый текст
+                    },
+                    {
+                        'if': {
+                            'filter_query': '{pred_4h} > 40.0',
+                        },
+                        'backgroundColor': '#f8d7da',  # слабый красный
+                        'color': '#721c24',  # темно-красный текст
+                    },
+                ],
+                style_cell={
+                    'fontSize': '11px',
+                    'padding': '4px 8px',
+                    'textAlign': 'center',
+                    'backgroundColor': '#f8f9fa',
+                    'color': '#212529',
+                    'whiteSpace': 'normal',
+                    'height': 'auto',
+                },
+                style_table={'height': '250px', 'overflowX': 'auto'},
+
+                )
+        ]),
+        dbc.Row([
+            html.H6("Прогноз 24 часа", style={"textAlign": "center", "margin-bottom": "10px"}),
+            dash_table.DataTable(
+                id='pred-24h-table',
+                columns=[
+                    {"name": "МКД №", "id": "id", "type": "numeric"},
+                    {"name": "Дата", "id": "datetime", "type": "datetime"},
+                    {"name": "Время", "id": "hour"},
+                    {"name": "Вер-сть инцидента, %", "id": 'pred_24h', "type": "numeric", "format": {"specifier": ".2f"}},
+
+
+                ],
+                data=[],
+                style_header={
+                    'fontWeight': 'bold',
+                    'textAlign': 'center',
+                    'backgroundColor': '#343a40',
+                    'color': 'white',
+                    'fontSize': '12px',
+                    'padding': '6px',
+                },
+                style_data_conditional=[
+                    {
+                        'if': {
+                            'filter_query': '{pred_24h} <= 12.0',
+                        },
+                        'backgroundColor': '#d4edda',  # слабый зеленый
+                        'color': '#155724',  # темно-зеленый текст
+                    },
+                    {
+                        'if': {
+                            'filter_query': '{pred_4h} > 12.0 && {pred_24h} <= 40.0',
+                        },
+                        'backgroundColor': '#fff3cd',  # слабый желтый
+                        'color': '#856404',  # темно-желтый текст
+                    },
+                    {
+                        'if': {
+                            'filter_query': '{pred_24h} > 40.0',
+                        },
+                        'backgroundColor': '#f8d7da',  # слабый красный
+                        'color': '#721c24',  # темно-красный текст
+                    },
+                ],
+                style_cell={
+                    'fontSize': '11px',
+                    'padding': '4px 8px',
+                    'textAlign': 'center',
+                    'backgroundColor': '#f8f9fa',
+                    'color': '#212529',
+                    'whiteSpace': 'normal',
+                    'height': 'auto',
+                },
+                style_table={'height': '250px', 'overflowX': 'auto'},
+
+                )
+        ]),
+        dbc.Row([
+            html.H6("Прогноз 3 дня", style={"textAlign": "center", "margin-bottom": "10px"}),
+            dash_table.DataTable(
+                id='pred-72h-table',
+                columns=[
+                    {"name": "МКД №", "id": "id", "type": "numeric"},
+                    {"name": "Дата", "id": "datetime", "type": "datetime"},
+                    {"name": "Время", "id": "hour"},
+                    {"name": "Вер-сть инцидента, %", "id": 'pred_72h', "type": "numeric", "format": {"specifier": ".2f"}},
+
+
+                ],
+                data=[],
+                style_header={
+                    'fontWeight': 'bold',
+                    'textAlign': 'center',
+                    'backgroundColor': '#343a40',
+                    'color': 'white',
+                    'fontSize': '12px',
+                    'padding': '6px',
+                },
+                style_data_conditional=[
+                    {
+                        'if': {
+                            'filter_query': '{pred_72h} <= 12.0',
+                        },
+                        'backgroundColor': '#d4edda',  # слабый зеленый
+                        'color': '#155724',  # темно-зеленый текст
+                    },
+                    {
+                        'if': {
+                            'filter_query': '{pred_72h} > 12.0 && {pred_72h} <= 40.0',
+                        },
+                        'backgroundColor': '#fff3cd',  # слабый желтый
+                        'color': '#856404',  # темно-желтый текст
+                    },
+                    {
+                        'if': {
+                            'filter_query': '{pred_72h} > 40.0',
+                        },
+                        'backgroundColor': '#f8d7da',  # слабый красный
+                        'color': '#721c24',  # темно-красный текст
+                    },
+                ],
+                style_cell={
+                    'fontSize': '11px',
+                    'padding': '4px 8px',
+                    'textAlign': 'center',
+                    'backgroundColor': '#f8f9fa',
+                    'color': '#212529',
+                    'whiteSpace': 'normal',
+                    'height': 'auto',
+                },
+                style_table={'height': '250px', 'overflowX': 'auto'},
+
+                )
+        ]),
+    ],
+    body=True,
+    color="secondary",
+    outline=True
+)
+
+
+
 layout = dbc.Container(
     [
         dbc.Row([
             dbc.Col([
-                dbc.Row(
-                    id_selection_predict,
-                    style={
-                        # "height": 40,
-                        "margin-left": 20,
-                        "margin-right": 20}
-                ),
-                dbc.Row(
-                    period_selection_predict,
-                    style={"margin-left": 20, "margin-top": 5, "height": 80, "margin-right": 20,}),
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Row(
+                            id_selection_predict,
+                            style={
+                                # "height": 40,
+                                "margin-left": 20,
+                                "margin-right": 20}
+                        ),
+                        dbc.Row(
+                            period_selection_predict,
+                            style={"margin-left": 20, "margin-top": 5,"margin-right": 20,}),
 
-            ]),
+                    ]),
+                    dbc.Col([
+                        dbc.Row(
+                            metric_predict_current,
+                            style={"height": 80, "margin-right": 20,}),
+                    ]),
+                    dbc.Col([
+                        dbc.Row(
+                            metric_predict_all,
+                            style={"height": 80, "margin-right": 20,}),
+                    ]),
+                ]),
+                dbc.Row([
+
+                    dcc.Graph(id='graph-predict', style={"height": 750}),
+                        # Добавьте этот компонент для автоматического обновления
+                    dcc.Interval(
+                        id='interval-component-predict',
+                        interval=30*60*1000,  # 30 минут в миллисекундах
+                        n_intervals=0
+                    )
+                ]),
+            ], width=9),
             dbc.Col([
-                dbc.Row(
-                    metric_predict_current,
-                    style={"height": 80, "margin-right": 20,}),
-            ]),
-            dbc.Col([
-                dbc.Row(
-                    metric_predict_all,
-                    style={"height": 80, "margin-right": 20,}),
-            ]),
-        ]),
-        dbc.Row([
-
-            dcc.Graph(id='graph-predict', style={"height": 750}),
-                # Добавьте этот компонент для автоматического обновления
-            dcc.Interval(
-                id='interval-component-predict',
-                interval=30*60*1000,  # 30 минут в миллисекундах
-                n_intervals=0
-            )
-        ]),
-
+                attention
+            ], width=3)
+        ])
     ],
     fluid=True,
 )
 
 @callback(
-    # Output('graph-predict', 'figure'),
     Output('mae-4h', 'children'),
     Output('mae-24h', 'children'),
     Output('mae-72h', 'children'),
-
-    Input('interval-component-predict', 'n_intervals')  # Добавьте этот Input
-)
+    Output('pred-4h-table', 'data'),
+    Output('pred-24h-table', 'data'),
+    Output('pred-72h-table', 'data'),
+    Input('interval-component-predict', 'n_intervals'))
 def save_predict_to_db(n):
 
     df = prepare_data_for_predict()
@@ -353,15 +509,60 @@ def save_predict_to_db(n):
 
     mae = df.dropna()
     mae_4h = mean_absolute_error(mae['percent_dif'], mae['pred_4h'])
-    mae_4h = f"{mae_4h:.1f} %"
+    mae_4h = f"{100 - mae_4h:.1f} %"
 
     mae_24h = mean_absolute_error(mae['percent_dif'], mae['pred_24h'])
-    mae_24h = f"{mae_24h:.1f} %"
+    mae_24h = f"{100 - mae_24h:.1f} %"
 
     mae_72h = mean_absolute_error(mae['percent_dif'], mae['pred_72h'])
-    mae_72h = f"{mae_72h:.1f} %"
+    mae_72h = f"{100 - mae_72h:.1f} %"
 
-    return mae_4h, mae_24h, mae_72h
+    df_4 = client.query_df(
+        f"""
+            SELECT id, datetime, pred_4h from msk_database.prediction
+            WHERE NOT isNaN(pred_4h)
+            ORDER BY datetime DESC, pred_4h DESC
+            LIMIT 1 BY id
+        """
+    )
+    df_4['hour_1'] = df_4['datetime'].dt.hour
+    df_4['hour_2'] = df_4['hour_1'] + 1
+    df_4['hour'] = (df_4['hour_1']).astype(str) + '-' + (df_4['hour_2']).astype(str)
+    df_4['datetime'] = df_4['datetime'].dt.date
+    del df_4['hour_1']
+    del df_4['hour_2']
+
+    df_24 = client.query_df(
+        f"""
+            SELECT id, datetime, pred_24h from msk_database.prediction
+            WHERE NOT isNaN(pred_24h)
+            ORDER BY datetime DESC, pred_24h DESC
+            LIMIT 1 BY id
+        """
+    )
+    df_24['hour_1'] = df_24['datetime'].dt.hour
+    df_24['hour_2'] = df_24['hour_1'] + 1
+    df_24['hour'] = (df_24['hour_1']).astype(str) + '-' + (df_24['hour_2']).astype(str)
+    df_24['datetime'] = df_24['datetime'].dt.date
+    del df_24['hour_1']
+    del df_24['hour_2']
+
+    df_72 = client.query_df(
+        f"""
+            SELECT id, datetime, pred_72h from msk_database.prediction
+            WHERE NOT isNaN(pred_72h)
+            ORDER BY datetime DESC, pred_72h DESC
+            LIMIT 1 BY id
+        """
+    )
+    df_72['hour_1'] = df_72['datetime'].dt.hour
+    df_72['hour_2'] = df_72['hour_1'] + 1
+    df_72['hour'] = (df_72['hour_1']).astype(str) + '-' + (df_72['hour_2']).astype(str)
+    df_72['datetime'] = df_72['datetime'].dt.date
+    del df_72['hour_1']
+    del df_72['hour_2']
+
+    return mae_4h, mae_24h, mae_72h, df_4.to_dict('records'), df_24.to_dict('records'), df_72.to_dict('records')
 
 
 @callback(
@@ -375,7 +576,16 @@ def save_predict_to_db(n):
 )
 def update_graph(id, period):
     client = clickhouse_connect.get_client(**CLICK_CONN)
-    df = client.query_df(f'SELECT * FROM msk_database.prediction WHERE id={id}')
+    try:
+        df = client.query_df(f'SELECT * FROM msk_database.prediction WHERE id={id}')
+    except:
+        df = pd.DataFrame()
+    
+    if df.empty:
+        # Создаем пустой график и метрики
+        fig = go.Figure()
+        fig.update_layout(title="Данные еще не загружены, подождите...")
+        return fig, "N/A", "N/A", "N/A"
 
     df = df.sort_values(['datetime'])
     df = df.tail(period * 30 * 24)
@@ -385,8 +595,8 @@ def update_graph(id, period):
         rows=2, 
         cols=1,
         subplot_titles=(
-            f'Прогноз моделей для (МКД) {id}',
-            f'Динамика расходов воды', 
+            f'Вероятность инцидентов для МКД № {id}',
+            f'Динамика расходов воды в МКД № {id}', 
         ),
         vertical_spacing=0.08
     )
@@ -473,7 +683,7 @@ def update_graph(id, period):
     # Обновляем layout
     fig.update_layout(
         height=800,
-        title_text="Прогнозная аналитика",
+        # title_text="Прогнозная аналитика",
         showlegend=True,
         template="plotly_white",
         legend=dict(

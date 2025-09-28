@@ -33,7 +33,7 @@ id_selection = dbc.Card(
             value=unique_ids[0],
             style={"margin-top": -10}
         ),
-        html.Div('Выбор дома', style={'font-weight': 'bold', "height": 10})
+        html.Div('Выбор дома', style={'font-weight': 'bold', "height": 10, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':10})
     ],
     body=True,
     color="secondary",
@@ -54,7 +54,7 @@ period_selection = dbc.Card(
             labelStyle={'margin-right': '30px'},  # горизонтальные отступы
             style={'margin': '0px 0'}  # вертикальные отступы
         ),
-        html.Div('Период отображение', style={'font-weight': 'bold', "height": 10})
+        html.Div('Период отображение', style={'font-weight': 'bold', "height": 10, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':10})
     ],
     body=True,
     color="secondary",
@@ -98,7 +98,7 @@ layout = dbc.Container(
         ]),
         dbc.Row([
             dbc.Col([
-                html.H4("Горячее вооснабжение", style={"textAlign": "center", "margin-bottom": "10px"}),
+                html.H4("Горячее вооснабжение", style={'font-weight': 'bold', "height": 10, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':10}),
                 dash_table.DataTable(
                     id='hot-table',
                     columns=[
@@ -122,7 +122,7 @@ layout = dbc.Container(
                 )
             ], width=6),
             dbc.Col([
-                html.H4("Холодное вооснабжение", style={"textAlign": "center", "margin-bottom": "10px"}),
+                html.H4("Холодное вооснабжение", style={'font-weight': 'bold', "height": 10, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':10}),
                 dash_table.DataTable(
                     id='cold-table',
                     columns=[
@@ -169,9 +169,9 @@ def update_graph(id, period, n):
         rows=3, 
         cols=1,
         subplot_titles=(
-            'Индивидуальный тепловой пункт (ИТП)',
-            f'Многокартирный жилой дом (МКД) {id}', 
-            'Температура входа и выхода горячей воды в МКД'
+            f'Расход и потребление индивидуального теплового пункта МКД № {id}',
+            f'Расход и потребление горячей воды в МКД № {id}', 
+            f'Температура входа и выхода горячей воды в МКД № {id}'
         ),
         vertical_spacing=0.08
     )
