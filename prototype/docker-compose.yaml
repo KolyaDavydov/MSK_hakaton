@@ -15,7 +15,7 @@ services:
     # Проброс портов: ЛОКАЛЬНЫЙ_ПОРТ:ПОРТ_В_КОНТЕЙНЕРЕ
     ports:
       - "8123:8123"  # HTTP интерфейс (для работы извне)
-      # - "6789:6789"  # Native protocol (для клиентов)
+      - "6789:6789"  # Native protocol (для клиентов)
     
     # Подключение томов (volumes) для сохранения данных
     volumes:
@@ -33,24 +33,26 @@ services:
     networks:
       - clickhouse-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8123/ping"]
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      # test: ["CMD", "curl", "-f", "http://localhost:8123/ping"]
       interval: 10s
-      retries: 5
-      timeout: 5s
+      retries: 10
+      timeout: 10s
 
   asupr-app:
     build: ./asupr_app
     container_name: asupr_modeling
     environment:
       - CLICKHOUSE_HOST=clickhouse
-      - CLICKHOUSE_PORT=8123
+      - CLICKHOUSE_PORT=6789
       - CLICKHOUSE_DB=msk_database
       - CLICKHOUSE_USER=admin
       - CLICKHOUSE_PASSWORD=password
       - PYTHONUNBUFFERED=1
       - TERM=xterm
     depends_on:
-      - clickhouse
+      clickhouse:
+        condition: service_healthy
     volumes:
       - ./asupr_app/src:/app/src
     networks:
@@ -63,12 +65,13 @@ services:
     container_name: dash_visualization
     environment:
       - CLICKHOUSE_HOST=clickhouse
-      - CLICKHOUSE_PORT=8123
+      - CLICKHOUSE_PORT=6789
       - CLICKHOUSE_DB=msk_database
       - CLICKHOUSE_USER=admin
       - CLICKHOUSE_PASSWORD=password
     depends_on:
-      - asupr-app
+      clickhouse:
+        condition: service_healthy
     ports:
       - "8124:8124"  # порт для доступа к Dash из вне
     volumes:
