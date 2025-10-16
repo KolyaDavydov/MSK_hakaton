@@ -49,7 +49,7 @@ period_selection = dbc.Card(
                 {'label': ' 3 месяца', 'value': 3},
                 {'label': ' 12 месяцев', 'value': 12}
             ],
-            value=1,
+            value=3,
             inline=True,
             labelStyle={'margin-right': '30px'},  # горизонтальные отступы
             style={'margin': '0px 0'}  # вертикальные отступы

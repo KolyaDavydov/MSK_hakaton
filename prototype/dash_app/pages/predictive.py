@@ -151,7 +151,7 @@ period_selection_predict = dbc.Card(
                 {'label': ' 3 месяца', 'value': 3},
                 {'label': ' 1 год', 'value': 12}
             ],
-            value=1,
+            value=3,
             inline=True,
             labelStyle={'margin-right': '30px'},  # горизонтальные отступы
             style={'margin': '0px 0'}  # вертикальные отступы
@@ -266,14 +266,14 @@ attention = dbc.Card(
                 style_data_conditional=[
                     {
                         'if': {
-                            'filter_query': '{pred_4h} <= 12.0',
+                            'filter_query': '{pred_4h} <= 20.0',
                         },
                         'backgroundColor': '#d4edda',  # слабый зеленый
                         'color': '#155724',  # темно-зеленый текст
                     },
                     {
                         'if': {
-                            'filter_query': '{pred_4h} > 12.0 && {pred_4h} <= 40.0',
+                            'filter_query': '{pred_4h} > 20.0 && {pred_4h} <= 40.0',
                         },
                         'backgroundColor': '#fff3cd',  # слабый желтый
                         'color': '#856404',  # темно-желтый текст
@@ -323,14 +323,14 @@ attention = dbc.Card(
                 style_data_conditional=[
                     {
                         'if': {
-                            'filter_query': '{pred_24h} <= 12.0',
+                            'filter_query': '{pred_24h} <= 20.0',
                         },
                         'backgroundColor': '#d4edda',  # слабый зеленый
                         'color': '#155724',  # темно-зеленый текст
                     },
                     {
                         'if': {
-                            'filter_query': '{pred_4h} > 12.0 && {pred_24h} <= 40.0',
+                            'filter_query': '{pred_24h} > 20.0 && {pred_24h} <= 40.0',
                         },
                         'backgroundColor': '#fff3cd',  # слабый желтый
                         'color': '#856404',  # темно-желтый текст
@@ -380,14 +380,14 @@ attention = dbc.Card(
                 style_data_conditional=[
                     {
                         'if': {
-                            'filter_query': '{pred_72h} <= 12.0',
+                            'filter_query': '{pred_72h} <= 20.0',
                         },
                         'backgroundColor': '#d4edda',  # слабый зеленый
                         'color': '#155724',  # темно-зеленый текст
                     },
                     {
                         'if': {
-                            'filter_query': '{pred_72h} > 12.0 && {pred_72h} <= 40.0',
+                            'filter_query': '{pred_72h} > 20.0 && {pred_72h} <= 40.0',
                         },
                         'backgroundColor': '#fff3cd',  # слабый желтый
                         'color': '#856404',  # темно-желтый текст

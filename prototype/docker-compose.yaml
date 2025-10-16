@@ -34,9 +34,9 @@ services:
       - clickhouse-network
     healthcheck:
       test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
-      interval: 10s
+      interval: 5s
       retries: 10
-      timeout: 10s
+      timeout: 5s
 
   asupr-app:
     build: ./asupr_app

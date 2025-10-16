@@ -54,10 +54,18 @@ def generate_data(df_origin, first_day='2025-01-01', last_day='2025-12-07', id=0
         random.uniform(0.01,0.1),
         random.uniform(0.2,0.3),
         random.uniform(0.4,0.5),
-        random.uniform(0.6,0.7),
+        random.uniform(0.8,0.9),
         ]
     random_count = np.random.randint(2, 5)
-    random_elements = np.random.choice(my_list, size=random_count, replace=False)
+
+
+    # Создаем веса: у последнего элемента вес в 5 раз меньше (80% снижение)
+    weights = [1, 1, 1, 0.02]  # Последний элемент имеет вес 0.2 (80% снижение)
+
+    # Нормализуем веса
+    normalized_weights = np.array(weights) / np.sum(weights)
+
+    random_elements = np.random.choice(my_list, size=random_count, replace=False, p=normalized_weights)
 
     for i in random_elements:
 
@@ -133,7 +141,7 @@ df = df_hot.merge(df_cold, on='datetime')
 
 list_pandas = []
 for i in tqdm(range(1, 101), file=sys.stdout):
-    temp = generate_data(df[df['datetime'] < datetime(2025, 4, 17)], first_day='2024-10-01', last_day='2025-09-24', id=i)
+    temp = generate_data(df[df['datetime'] < datetime(2025, 4, 17)], first_day='2024-10-14', last_day='2025-10-01', id=i)
     list_pandas.append(temp)
     # temp.to_csv(f"{i}.csv", index=False)
 
@@ -181,7 +189,7 @@ while True:
         SELECT *
         FROM msk_database.analytic
         ORDER BY datetime DESC
-        LIMIT {total_df['id'].nunique() * 24 * 7}
+        LIMIT {total_df['id'].nunique() * 24 * 77}
         """)
 
 
@@ -192,13 +200,15 @@ while True:
     else:
         list_df = []
         for id in click_df['id'].unique():
-            temp = click_df[(click_df['id'] == id) & (click_df['datetime'] == click_df['datetime'].max() - pd.Timedelta(days=6, hours=23))]
+            # temp = click_df[(click_df['id'] == id) & (click_df['datetime'] == click_df['datetime'].max() - pd.Timedelta(days=6, hours=23))]
+            temp = click_df[(click_df['id'] == id) & (click_df['datetime'] == click_df['datetime'].max() - pd.Timedelta(days=69, hours=23))]
             list_df.append(temp)
         
         new_df = pd.concat(list_df, axis=0)
-        new_df['datetime'] = new_df['datetime'] + pd.Timedelta(weeks=1)
+        new_df['datetime'] = new_df['datetime'] + pd.Timedelta(weeks=10)
         new_df['cumulative_rashod_cold'] = new_df['cumulative_rashod_cold'] + new_df['rashod_cold']
         new_df = new_df.reset_index(drop=True)
         client.insert_df('msk_database.analytic', new_df)
-        time.sleep(1)
+        print(new_df.tail(1))
+        time.sleep(0.01)
         # print(f"Максимальное время в НОВОЙ таблице {new_df['datetime'].max()}")
