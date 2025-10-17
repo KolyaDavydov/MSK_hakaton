@@ -54,7 +54,7 @@ def generate_data(df_origin, first_day='2025-01-01', last_day='2025-12-07', id=0
         random.uniform(0.01,0.1),
         random.uniform(0.2,0.3),
         random.uniform(0.4,0.5),
-        random.uniform(0.8,0.9),
+        random.uniform(0.8,0.95),
         ]
     random_count = np.random.randint(2, 5)
 
@@ -140,7 +140,7 @@ df = df_hot.merge(df_cold, on='datetime')
 
 
 list_pandas = []
-for i in tqdm(range(1, 101), file=sys.stdout):
+for i in tqdm(range(1, 81), file=sys.stdout):
     temp = generate_data(df[df['datetime'] < datetime(2025, 4, 17)], first_day='2024-10-14', last_day='2025-10-01', id=i)
     list_pandas.append(temp)
     # temp.to_csv(f"{i}.csv", index=False)

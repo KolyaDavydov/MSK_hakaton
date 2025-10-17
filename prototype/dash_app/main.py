@@ -64,7 +64,7 @@ app.layout = html.Div(
                                 href="/learning/",
                             ), width="auto"),
                         dbc.Col(
-                            html.H1('Сервис аналитики водоснабжения и прогнозирования инцидентов', style={'font-weight': 'bold', "height": 30, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':10}),
+                            html.H1('Сервис аналитики и прогнозирования', style={'font-weight': 'bold', "height": 25, 'text-align': 'center', 'color': '#2c3e50', 'margin-top':10}),
                                 width=True
                             )
                     ]
@@ -115,5 +115,5 @@ def update_active_tab(pathname):
         return [base_style, base_style, base_style]
 
 if __name__ == "__main__":
-    # app.run(port=8124, host='0.0.0.0', debug=True)
-    app.run(port=8124, host='0.0.0.0')
+    app.run(port=8124, host='0.0.0.0', debug=True)
+    # app.run(port=8124, host='0.0.0.0')
