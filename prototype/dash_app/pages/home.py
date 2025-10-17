@@ -60,7 +60,9 @@ id_selection = dbc.Card(
             value=unique_ids[0],
             style={
                 'border': 'none',
-                'box-shadow': '0 2px 4px rgba(0,0,0,0.1)'
+                'box-shadow': '0 2px 4px rgba(0,0,0,0.1)',
+                'position': 'relative',  # Добавляем позиционирование
+                'zIndex': 1000  # Высокий z-index для выпадающего списка
             }
         ),
     ],
@@ -69,9 +71,38 @@ id_selection = dbc.Card(
         'border': 'none',
         'box-shadow': '0 4px 6px rgba(0,0,0,0.1)',
         'border-radius': '10px',
-        'background': 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)'
+        'background': 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+        'position': 'relative',  # Добавляем позиционирование для карточки
+        'zIndex': 999  # Немного меньший z-index для карточки
     }
 )
+# id_selection = dbc.Card(
+#     [
+#         html.Div(
+#             [
+#                 html.I(className="fas fa-building fa-lg", style={'color': COLORS['primary'], 'margin-right': '10px'}),
+#                 html.Span('Выбор дома', style={'font-weight': 'bold', 'color': COLORS['dark']})
+#             ],
+#             className="d-flex align-items-center mb-2"
+#         ),
+#         dcc.Dropdown(
+#             id="id-dropdown",
+#             options=[{'label': f'МКД № {id}', 'value': id} for id in unique_ids],
+#             value=unique_ids[0],
+#             style={
+#                 'border': 'none',
+#                 'box-shadow': '0 2px 4px rgba(0,0,0,0.1)'
+#             }
+#         ),
+#     ],
+#     body=True,
+#     style={
+#         'border': 'none',
+#         'box-shadow': '0 4px 6px rgba(0,0,0,0.1)',
+#         'border-radius': '10px',
+#         'background': 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)'
+#     }
+# )
 
 period_selection = dbc.Card(
     [
