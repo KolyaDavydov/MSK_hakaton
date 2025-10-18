@@ -136,12 +136,7 @@ header = dbc.Card(
                 html.P("Настройка и обучение алгоритмов машинного обучения для прогнозирования инцидентов", 
                       style={'color': 'rgba(255,255,255,0.8)', 'margin': '0', 'fontSize': '14px'})
             ]),
-            # dbc.Col([
-            #     html.Div([
-            #         html.I(className="fas fa-brain", style={'marginRight': '8px'}),
-            #         "Обновление моделей каждые 30 минут"
-            #     ], style={'color': 'white', 'textAlign': 'right', 'fontSize': '14px'})
-            # ], width="auto")
+
         ])
     ]),
     style=CARD_STYLE,

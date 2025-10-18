@@ -599,9 +599,6 @@ def save_predict_to_db(n):
 
 @callback(
     Output('graph-predict', 'figure'),
-    # Output('mae-4h-curr', 'children'),
-    # Output('mae-24h-curr', 'children'),
-    # Output('mae-72h-curr', 'children'),
     Input('id-dropdown-predict', 'value'),
     Input('period-radio-predict', 'value'),
 )
@@ -753,4 +750,4 @@ def update_graph(id, period):
     mae_72h = mean_absolute_error(mae['percent_dif'], mae['pred_72h'])
     mae_72h = f"{100 - mae_72h:.1f}%"
   
-    return fig#, mae_4h, mae_24h, mae_72h
+    return fig

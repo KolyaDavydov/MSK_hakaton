@@ -194,13 +194,11 @@ while True:
 
 
     if click_df['datetime'].max() == current_hour:
-        # print(f"Максимальное время в таблице {click_df['datetime'].max()}")
         time.sleep(10)
         continue
     else:
         list_df = []
         for id in click_df['id'].unique():
-            # temp = click_df[(click_df['id'] == id) & (click_df['datetime'] == click_df['datetime'].max() - pd.Timedelta(days=6, hours=23))]
             temp = click_df[(click_df['id'] == id) & (click_df['datetime'] == click_df['datetime'].max() - pd.Timedelta(days=69, hours=23))]
             list_df.append(temp)
         
@@ -211,4 +209,3 @@ while True:
         client.insert_df('msk_database.analytic', new_df)
         print(new_df.tail(1))
         time.sleep(0.01)
-        # print(f"Максимальное время в НОВОЙ таблице {new_df['datetime'].max()}")
