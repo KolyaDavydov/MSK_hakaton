@@ -1,5 +1,17 @@
 # Рекомендательный сервис прогнозирования возникновения технологических ситуаций
 
+Ссылка на сервис (*ПРИ ПЕРЕХОДЕ ПРОВЕРЬТЕ ЧТО БЫ У ВАС БЫЛ ОТКЛЮЧЕН VPN!!!*): http://45.67.56.86:8124/
+
+Ссылка на 5 минутный скринкаст: https://drive.google.com/file/d/1VUVRB-gZkm-BUbIAF79DqireMG2LUyfg/view?usp=sharing
+
+Ссылка на инструкцию пользователя: https://docs.google.com/document/d/1KdXh8XUIrdfPxiXtuut6C_djQ9VHLaK7G2uZxieUH_4/edit?usp=drive_link
+
+Ссылка на презентацию: https://drive.google.com/file/d/1z5rBSHxa64cHb2NsrqMfZsCoWfXW5Sja/view?usp=sharing
+
+Ссылка на репозиторий с кодом: https://github.com/KolyaDavydov/MSK_hakaton
+
+Контакт для связи: Николай Давыдов (telegram: @kolyadavydov)
+
 
 ## Быстрый запуск прототипа на сервере:
 
@@ -12,6 +24,3 @@
 `http://[сетевой адрес сервера]:8124/`
 
 и наслаждаться веб интерфейсом прототипа
-
-
-### P.S. Живая демонстрация возможна по адресу `http://45.67.56.86:8124/` при недоступности по адресу попросить в телеграм `@kolyadavydov` поднять сервис 
